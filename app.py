@@ -1,7 +1,11 @@
-from flask import Flask, make_response, redirect, url_for, render_template, request     
-app = Flask(__name__)   # Flask constructor 
+from flask import Flask, flash, make_response, redirect, url_for, render_template, request     
 from werkzeug.utils import secure_filename
-  
+import os
+
+
+app = Flask(__name__)   # Flask constructor 
+app.secret_key = os.urandom(24)
+app.config['SECRET_KEY'] = os.urandom(24)  
 # A decorator used to tell the application 
 # which URL is associated function 
 # @app.route('/')       
@@ -20,9 +24,9 @@ from werkzeug.utils import secure_filename
 # def revision(revNo): 
 #     return 'Revision Number %f' % revNo 
 
-# @app.route('/admin')  # decorator for route(argument) function
-# def hello_admin():  # binding to hello_admin call
-#     return 'Hello Admin'
+@app.route('/admin')  # decorator for route(argument) function
+def hello_admin():  # binding to hello_admin call
+    return 'Hello Admin'
 
 
 # @app.route('/guest/<guest>')
@@ -77,7 +81,21 @@ def result():
         result = request.form
         return render_template("result.html", result=result)
     
-    
+@app.route('/login', methods=['GET', 'POST'])
+# login function verify username and password
+def login():
+    error = None
+
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or \
+                request.form['password'] != 'admin':
+            error = 'Invalid username or password. Please try again !'
+        else:
+
+            # flashes on successful login
+            flash('You were successfully logged in')
+            return redirect(url_for('hello_admin'))
+    return render_template('login.html', error=error)    
 if __name__=='__main__': 
    app.run(debug=True) 
 
