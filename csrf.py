@@ -6,6 +6,10 @@ app.secret_key = b'_53oi3uriq9pifpff;apl'
 csrf = CSRFProtect(app) 
 
 
+@app.route("/")
+def index():
+	return render_template("csrf.html")
+
 @app.route("/protected_form", methods=['GET', 'POST']) 
 def protected_form(): 
 	if request.method == 'POST': 
